@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyTerminal.Domain", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyTerminal.Infrastructure", "src\CurrencyTerminal.Infrastructure\CurrencyTerminal.Infrastructure.csproj", "{B7769253-D3F1-4A08-9340-1C15108237DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyTerminal.App", "src\CurrencyTerminal.App\CurrencyTerminal.App.csproj", "{766FB74E-1B5D-4127-8A11-70DED6AC8161}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{B7769253-D3F1-4A08-9340-1C15108237DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7769253-D3F1-4A08-9340-1C15108237DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7769253-D3F1-4A08-9340-1C15108237DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{766FB74E-1B5D-4127-8A11-70DED6AC8161}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{766FB74E-1B5D-4127-8A11-70DED6AC8161}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{766FB74E-1B5D-4127-8A11-70DED6AC8161}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{766FB74E-1B5D-4127-8A11-70DED6AC8161}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
