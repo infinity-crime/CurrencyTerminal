@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace CurrencyTerminal.App.Common
 {
     public class Result
     {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public Error? Error { get; }
         public bool IsSuccess { get; }
 

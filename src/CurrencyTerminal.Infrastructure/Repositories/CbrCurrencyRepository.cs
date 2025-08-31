@@ -35,6 +35,7 @@ namespace CurrencyTerminal.Infrastructure.Repositories
                 string xml = response.OuterXml;
 
                 var ds = new DataSet();
+
                 using (var sr = new StringReader(xml))
                 using (var xr = XmlReader.Create(sr))
                 {
@@ -49,11 +50,19 @@ namespace CurrencyTerminal.Infrastructure.Repositories
                         result.Add(new CurrencyData
                         {
                             Vname = row["Vname"]?.ToString() ?? string.Empty,
-                            Vnom = Convert.ToDecimal(row["Vnom"], System.Globalization.CultureInfo.InvariantCulture),
-                            Vcurs = Convert.ToDecimal(row["Vcurs"], System.Globalization.CultureInfo.InvariantCulture),
+
+                            Vnom = Convert.ToDecimal(row["Vnom"], 
+                            System.Globalization.CultureInfo.InvariantCulture),
+
+                            Vcurs = Convert.ToDecimal(row["Vcurs"],
+                            System.Globalization.CultureInfo.InvariantCulture),
+
                             Vcode = Convert.ToInt32(row["Vcode"]),
+
                             VchCode = row["VchCode"]?.ToString() ?? string.Empty,
-                            VunitRate = Convert.ToDouble(row["VunitRate"], System.Globalization.CultureInfo.InvariantCulture)
+
+                            VunitRate = Convert.ToDouble(row["VunitRate"], 
+                            System.Globalization.CultureInfo.InvariantCulture)
                         });
                     }
                 }             

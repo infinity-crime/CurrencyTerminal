@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CurrencyTerminal.App.Common;
+using CurrencyTerminal.App.Errors;
 using CurrencyTerminal.App.Interfaces;
 using CurrencyTerminal.Domain.Entities;
 using CurrencyTerminal.Domain.Interfaces;
@@ -29,13 +30,16 @@ namespace CurrencyTerminal.App.Services
             {
                 var currencyRates = await _currencyRepository.GetAllCurrenciesDataAsync(onDate);
 
+                if (currencyRates.Count() < 1 && onDate.HasValue)
+                    return Result<IEnumerable<CurrencyRate>>
+                        .Failure(CurrencyErrors.NotFound(onDate.Value));
+
                 return Result<IEnumerable<CurrencyRate>>
                     .Success(_mapper.Map<IEnumerable<CurrencyRate>>(currencyRates));
             }
-            catch(ApplicationException ex)
+            catch(ApplicationException)
             {
-                var error = Error.Failure("ApplicationException", ex.Message);
-                return Result<IEnumerable<CurrencyRate>>.Failure(error);
+                return Result<IEnumerable<CurrencyRate>>.Failure(CurrencyErrors.Failure());
             }
         }
 
