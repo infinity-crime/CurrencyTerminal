@@ -2,6 +2,7 @@
 using ServiceReference1;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,22 +31,32 @@ namespace CurrencyTerminal.Infrastructure.Repositories
             {
                 var date = onDate ?? DateTime.UtcNow;
                 var response = await _soapClient.GetCursOnDateXMLAsync(date);
-                var xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(response.OuterXml);
+
+                string xml = response.OuterXml;
+
+                var ds = new DataSet();
+                using (var sr = new StringReader(xml))
+                using (var xr = XmlReader.Create(sr))
+                {
+                    ds.ReadXml(xr);
+                }
 
                 var result = new List<CurrencyData>();
-                foreach (XmlNode node in xmlDoc.SelectNodes("ValuteCursOnDate")!)
+                if(ds.Tables.Contains("ValuteCursOnDate"))
                 {
-                    result.Add(new CurrencyData
+                    foreach (DataRow row in ds.Tables["ValuteCursOnDate"]!.Rows)
                     {
-                        Vname = node.SelectSingleNode("Vname")?.InnerText!,
-                        Vnom = decimal.Parse(node.SelectSingleNode("Vnom")?.InnerText!),
-                        Vcurs = decimal.Parse(node.SelectSingleNode("Vcurs")?.InnerText!),
-                        Vcode = int.Parse(node.SelectSingleNode("Vcode")?.InnerText!),
-                        VchCode = node.SelectSingleNode("VchCode")?.InnerText!,
-                        VunitRate = double.Parse(node.SelectSingleNode("VunitRate")?.InnerText!)
-                    });
-                }
+                        result.Add(new CurrencyData
+                        {
+                            Vname = row["Vname"]?.ToString() ?? string.Empty,
+                            Vnom = Convert.ToDecimal(row["Vnom"], System.Globalization.CultureInfo.InvariantCulture),
+                            Vcurs = Convert.ToDecimal(row["Vcurs"], System.Globalization.CultureInfo.InvariantCulture),
+                            Vcode = Convert.ToInt32(row["Vcode"]),
+                            VchCode = row["VchCode"]?.ToString() ?? string.Empty,
+                            VunitRate = Convert.ToDouble(row["VunitRate"], System.Globalization.CultureInfo.InvariantCulture)
+                        });
+                    }
+                }             
 
                 return result;
             }

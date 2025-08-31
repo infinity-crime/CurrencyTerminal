@@ -1,4 +1,5 @@
-﻿using CurrencyTerminal.App.Common;
+﻿using AutoMapper;
+using CurrencyTerminal.App.Common;
 using CurrencyTerminal.App.Interfaces;
 using CurrencyTerminal.Domain.Entities;
 using CurrencyTerminal.Domain.Interfaces;
@@ -14,15 +15,28 @@ namespace CurrencyTerminal.App.Services
     public class CurrencyService : ICurrencyService
     {
         private readonly ICurrencyRepository _currencyRepository;
+        private readonly IMapper _mapper;
 
-        public CurrencyService(ICurrencyRepository currencyRepository)
+        public CurrencyService(ICurrencyRepository currencyRepository, IMapper mapper)
         {
             _currencyRepository = currencyRepository;
+            _mapper = mapper;
         }
 
-        public Task<Result<IEnumerable<CurrencyRate>>> GetAllCurrencyRatesAsync(DateTime? onDate = null)
+        public async Task<Result<IEnumerable<CurrencyRate>>> GetAllCurrencyRatesAsync(DateTime? onDate = null)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var currencyRates = await _currencyRepository.GetAllCurrenciesDataAsync(onDate);
+
+                return Result<IEnumerable<CurrencyRate>>
+                    .Success(_mapper.Map<IEnumerable<CurrencyRate>>(currencyRates));
+            }
+            catch(ApplicationException ex)
+            {
+                var error = Error.Failure("ApplicationException", ex.Message);
+                return Result<IEnumerable<CurrencyRate>>.Failure(error);
+            }
         }
 
         public Task<Result<CurrencyRate>> GetCurrencyRateAsync(string currencyCode, DateTime? onDate = null)

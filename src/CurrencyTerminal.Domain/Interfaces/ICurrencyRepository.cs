@@ -8,7 +8,22 @@ namespace CurrencyTerminal.Domain.Interfaces
 {
     public interface ICurrencyRepository
     {
+        /// <summary>
+        /// Получение данных о конкретной валюте. Исключения: 
+        /// KeyNotFoundException() при неверном currencyCode,
+        /// ApplicationException() при сбое получения данных.
+        /// </summary>
+        /// <param name="currencyCode"></param>
+        /// <param name="onDate"></param>
+        /// <returns></returns>
         public Task<CurrencyData> GetCurrencyRateAsync(string currencyCode, DateTime? onDate = null);
+
+        /// <summary>
+        /// Получение данных о всех валютах. Исключения:
+        /// ApplicationException() при сбое получения данных.
+        /// </summary>
+        /// <param name="onDate"></param>
+        /// <returns></returns>
         public Task<IEnumerable<CurrencyData>> GetAllCurrenciesDataAsync(DateTime? onDate = null);
     }
 
