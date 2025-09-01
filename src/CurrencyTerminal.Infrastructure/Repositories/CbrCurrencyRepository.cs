@@ -3,6 +3,7 @@ using ServiceReference1;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,84 +28,73 @@ namespace CurrencyTerminal.Infrastructure.Repositories
 
         public async Task<IEnumerable<CurrencyData>> GetAllCurrenciesDataAsync(DateTime? onDate = null)
         {
-            try
-            {
-                var date = onDate ?? DateTime.UtcNow;
-                var response = await _soapClient.GetCursOnDateXMLAsync(date);
+            var date = onDate ?? DateTime.UtcNow;
+            var result = new List<CurrencyData>();
 
-                string xml = response.OuterXml;
-
-                var ds = new DataSet();
-
-                using (var sr = new StringReader(xml))
-                using (var xr = XmlReader.Create(sr))
-                {
-                    ds.ReadXml(xr);
-                }
-
-                var result = new List<CurrencyData>();
-                if(ds.Tables.Contains("ValuteCursOnDate"))
-                {
-                    foreach (DataRow row in ds.Tables["ValuteCursOnDate"]!.Rows)
-                    {
-                        result.Add(new CurrencyData
-                        {
-                            Vname = row["Vname"]?.ToString() ?? string.Empty,
-
-                            Vnom = Convert.ToDecimal(row["Vnom"], 
-                            System.Globalization.CultureInfo.InvariantCulture),
-
-                            Vcurs = Convert.ToDecimal(row["Vcurs"],
-                            System.Globalization.CultureInfo.InvariantCulture),
-
-                            Vcode = Convert.ToInt32(row["Vcode"]),
-
-                            VchCode = row["VchCode"]?.ToString() ?? string.Empty,
-
-                            VunitRate = Convert.ToDouble(row["VunitRate"], 
-                            System.Globalization.CultureInfo.InvariantCulture)
-                        });
-                    }
-                }             
-
+            XmlNode response = await _soapClient.GetCursOnDateXMLAsync(date);
+            if (response == null)
                 return result;
-            }
-            catch (Exception ex)
+
+            foreach(XmlNode node in response.ChildNodes)
             {
-                throw new ApplicationException("Ошибка получения данных о валютах", ex);
+                result.Add(new CurrencyData
+                {
+                    Vname = node.SelectSingleNode("Vname")?.InnerText.Trim()!,
+
+                    Vnom = decimal.TryParse(node.SelectSingleNode("Vnom")?
+                    .InnerText!, CultureInfo.InvariantCulture, out decimal resNom) ? resNom : 0m,
+
+                    Vcurs = decimal.TryParse(node.SelectSingleNode("Vcurs")?
+                    .InnerText!, CultureInfo.InvariantCulture, out decimal resCurs) ? resCurs : 0m,
+
+                    Vcode = int.TryParse(node.SelectSingleNode("Vcode")?
+                    .InnerText!, CultureInfo.InvariantCulture, out int resCode) ? resCode : 0,
+
+                    VchCode = node.SelectSingleNode("VchCode")?.InnerText.Trim()!,
+
+                    VunitRate = double.TryParse(node.SelectSingleNode("VunitRate")?
+                    .InnerText!, CultureInfo.InvariantCulture, out double resRate) ? resRate : 0
+                });
             }
+            
+            return result;
         }
         
 
-        public async Task<CurrencyData> GetCurrencyRateAsync(string currencyCode, DateTime? onDate = null)
+        public async Task<CurrencyData?> GetCurrencyRateAsync(string currencyCode, DateTime? onDate = null)
         {
-            try
-            {
-                var date = onDate ?? DateTime.UtcNow;
-                var response = await _soapClient.GetCursOnDateXMLAsync(date);
-                var xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(response.OuterXml);
+            var date = onDate ?? DateTime.UtcNow;
 
-                var valuteNode = xmlDoc.SelectSingleNode($"ValuteCursOnDate[VchCode='{currencyCode}']");
-                if(valuteNode != null)
+            XmlNode response = await _soapClient.GetCursOnDateXMLAsync(date);
+            if (response == null)
+                return null;
+
+            foreach(XmlNode node in response.ChildNodes)
+            {
+                if(node.SelectSingleNode("VchCode")!.InnerText == currencyCode)
                 {
                     return new CurrencyData
                     {
-                        Vname = valuteNode.SelectSingleNode("Vname")?.InnerText!,
-                        Vnom = decimal.Parse(valuteNode.SelectSingleNode("Vnom")?.InnerText!),
-                        Vcurs = decimal.Parse(valuteNode.SelectSingleNode("Vcurs")?.InnerText!),
-                        Vcode = int.Parse(valuteNode.SelectSingleNode("Vcode")?.InnerText!),
-                        VchCode = valuteNode.SelectSingleNode("VchCode")?.InnerText!,
-                        VunitRate = double.Parse(valuteNode.SelectSingleNode("VunitRate")?.InnerText!)
+                        Vname = node.SelectSingleNode("Vname")?.InnerText.Trim()!,
+
+                        Vnom = decimal.TryParse(node.SelectSingleNode("Vnom")?
+                        .InnerText!, CultureInfo.InvariantCulture, out decimal resNom) ? resNom : 0m,
+
+                        Vcurs = decimal.TryParse(node.SelectSingleNode("Vcurs")?
+                        .InnerText!, CultureInfo.InvariantCulture, out decimal resCurs) ? resCurs : 0m,
+
+                        Vcode = int.TryParse(node.SelectSingleNode("Vcode")?
+                        .InnerText!, CultureInfo.InvariantCulture, out int resCode) ? resCode : 0,
+
+                        VchCode = node.SelectSingleNode("VchCode")?.InnerText.Trim()!,
+
+                        VunitRate = double.TryParse(node.SelectSingleNode("VunitRate")?
+                        .InnerText!, CultureInfo.InvariantCulture, out double resRate) ? resRate : 0
                     };
                 }
+            }
 
-                throw new KeyNotFoundException($"Валюта с кодом {currencyCode} не найдена!");
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException("Ошибка получения курса валюты", ex);
-            }
+            return null;
         }
     }
 }

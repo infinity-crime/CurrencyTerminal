@@ -18,10 +18,17 @@ namespace CurrencyTerminal.WebAPI.Controllers
         }
 
         [HttpGet("all-rates/{date?}")]
-        public async Task<IActionResult> GetAllRates([FromRoute] DateTime? date)
+        public async Task<IActionResult> GetAllCurrencyRatesAsync([FromRoute] DateTime? date)
         {
             var currancyRates = await _currencyService.GetAllCurrencyRatesAsync(date);
             return HandleResult<IEnumerable<CurrencyRate>>(currancyRates);
+        }
+
+        [HttpGet("rate/{code}/{date?}")]
+        public async Task<IActionResult> GetCurrencyRateAsync([FromRoute] string code, [FromRoute] DateTime? date)
+        {
+            var currencyRate = await _currencyService.GetCurrencyRateAsync(code, date);
+            return HandleResult<CurrencyRate>(currencyRate);
         }
     }
 }

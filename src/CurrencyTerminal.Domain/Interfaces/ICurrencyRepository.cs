@@ -16,7 +16,7 @@ namespace CurrencyTerminal.Domain.Interfaces
         /// <param name="currencyCode"></param>
         /// <param name="onDate"></param>
         /// <returns></returns>
-        public Task<CurrencyData> GetCurrencyRateAsync(string currencyCode, DateTime? onDate = null);
+        public Task<CurrencyData?> GetCurrencyRateAsync(string currencyCode, DateTime? onDate = null);
 
         /// <summary>
         /// Получение данных о всех валютах. Исключения:

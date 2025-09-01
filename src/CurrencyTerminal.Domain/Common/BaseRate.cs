@@ -14,8 +14,7 @@ namespace CurrencyTerminal.Domain.Common
         public decimal RateToRuble { get; set; }
 
         // Metadata
-        public DateTime RequestDate { get; set; } = DateTime.UtcNow;
-        public string Source { get; set; } = "Unknown";
+        public string RequestDate { get; set; } = DateTime.UtcNow.ToShortDateString();
 
         public decimal ConvertFromRub(decimal amountInRub) =>
             amountInRub / RateToRuble;

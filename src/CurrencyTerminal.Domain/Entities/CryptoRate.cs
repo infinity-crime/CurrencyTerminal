@@ -35,13 +35,5 @@ namespace CurrencyTerminal.Domain.Entities
             Volume24h = volume;
             MarketCap = marketCap;
         }
-
-        public void ChangeSource(string otherSource)
-        {
-            if (string.IsNullOrEmpty(otherSource))
-                throw new CryptoRateException("Источник ресурсов не может быть NULL!");
-
-            Source = otherSource;
-        }
     }
 }

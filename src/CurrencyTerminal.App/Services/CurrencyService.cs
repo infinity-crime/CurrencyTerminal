@@ -26,26 +26,25 @@ namespace CurrencyTerminal.App.Services
 
         public async Task<Result<IEnumerable<CurrencyRate>>> GetAllCurrencyRatesAsync(DateTime? onDate = null)
         {
-            try
-            {
-                var currencyRates = await _currencyRepository.GetAllCurrenciesDataAsync(onDate);
+            var currencyDataList = await _currencyRepository.GetAllCurrenciesDataAsync(onDate);
 
-                if (currencyRates.Count() < 1 && onDate.HasValue)
-                    return Result<IEnumerable<CurrencyRate>>
-                        .Failure(CurrencyErrors.NotFound(onDate.Value));
-
+            if (currencyDataList.Count() < 1 && onDate.HasValue)
                 return Result<IEnumerable<CurrencyRate>>
-                    .Success(_mapper.Map<IEnumerable<CurrencyRate>>(currencyRates));
-            }
-            catch(ApplicationException)
-            {
-                return Result<IEnumerable<CurrencyRate>>.Failure(CurrencyErrors.Failure());
-            }
+                    .Failure(CurrencyErrors.NotFound(onDate.Value));
+
+            return Result<IEnumerable<CurrencyRate>>
+                .Success(_mapper.Map<IEnumerable<CurrencyRate>>(currencyDataList));
         }
 
-        public Task<Result<CurrencyRate>> GetCurrencyRateAsync(string currencyCode, DateTime? onDate = null)
+        public async Task<Result<CurrencyRate>> GetCurrencyRateAsync(string currencyCode, DateTime? onDate = null)
         {
-            throw new NotImplementedException();
+            var currencyData = await _currencyRepository.GetCurrencyRateAsync(currencyCode, onDate);
+
+            if(currencyData == null)
+                return Result<CurrencyRate>
+                    .Failure(CurrencyErrors.NotFound(currencyCode));
+
+            return Result<CurrencyRate>.Success(_mapper.Map<CurrencyRate>(currencyData));
         }
     }
 }

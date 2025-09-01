@@ -29,13 +29,5 @@ namespace CurrencyTerminal.Domain.Entities
 
             PreviousValueRate = value;
         }
-
-        public void ChangeSource(string otherSource)
-        {
-            if (string.IsNullOrEmpty(otherSource))
-                throw new CurrencyRateException("Источник ресурсов не может быть NULL!");
-
-            Source = otherSource;
-        }
     }
 }

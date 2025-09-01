@@ -17,8 +17,7 @@ namespace CurrencyTerminal.App.MapProfiles
             CreateMap<CurrencyData, CurrencyRate>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Vname))
                 .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.VchCode))
-                .ForMember(dest => dest.RateToRuble, opt => opt.MapFrom(src => src.VunitRate))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Vname));
+                .ForMember(dest => dest.RateToRuble, opt => opt.MapFrom(src => src.VunitRate));
         }
     }
 }
