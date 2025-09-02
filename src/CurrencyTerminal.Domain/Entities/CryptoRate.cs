@@ -15,7 +15,7 @@ namespace CurrencyTerminal.Domain.Entities
         public decimal Volume24h { get; private set; }
         public decimal MarketCap { get; private set; }
 
-        public static CryptoRate Create(string code, string name, decimal value)
+        public static CryptoRate Create(string code, string name, double value)
         {
             return new CryptoRate
             {

@@ -11,12 +11,12 @@ namespace CurrencyTerminal.Domain.Common
         public string Code { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
 
-        public decimal RateToRuble { get; set; }
+        public double RateToRuble { get; set; }
 
         // Metadata
         public string RequestDate { get; set; } = DateTime.UtcNow.ToShortDateString();
 
-        public decimal ConvertFromRub(decimal amountInRub) =>
+        public double ConvertFromRub(double amountInRub) =>
             amountInRub / RateToRuble;
 
         public bool Equals(BaseRate? other)

@@ -1,18 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CurrencyTerminal.Razor.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
-
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel()
         {
-            _logger = logger;
+            
         }
 
-        public void OnGet()
+        public IEnumerable<SelectListItem> AvailableCurrencies { get; private set; } = Enumerable.Empty<SelectListItem>();
+
+        [BindProperty]
+        public string SelectedCurrency { get; set; }
+
+        public string? ErrorMessage { get; private set; }
+
+        public async Task OnGetAsync()
         {
 
         }

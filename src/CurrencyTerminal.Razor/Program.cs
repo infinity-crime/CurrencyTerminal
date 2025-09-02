@@ -1,6 +1,10 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages()
+    .AddRazorRuntimeCompilation();
+
+builder.Services.AddHttpClient("internal");
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 

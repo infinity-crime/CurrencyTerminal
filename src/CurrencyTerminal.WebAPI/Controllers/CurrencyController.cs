@@ -1,4 +1,5 @@
-﻿using CurrencyTerminal.App.Interfaces;
+﻿using CurrencyTerminal.App.DTOs;
+using CurrencyTerminal.App.Interfaces;
 using CurrencyTerminal.Domain.Entities;
 using CurrencyTerminal.WebAPI.Common;
 using Microsoft.AspNetCore.Http;
@@ -21,14 +22,14 @@ namespace CurrencyTerminal.WebAPI.Controllers
         public async Task<IActionResult> GetAllCurrencyRatesAsync([FromRoute] DateTime? date)
         {
             var currancyRates = await _currencyService.GetAllCurrencyRatesAsync(date);
-            return HandleResult<IEnumerable<CurrencyRate>>(currancyRates);
+            return HandleResult<IEnumerable<CurrencyRateDto>>(currancyRates);
         }
 
         [HttpGet("rate/{code}/{date?}")]
         public async Task<IActionResult> GetCurrencyRateAsync([FromRoute] string code, [FromRoute] DateTime? date)
         {
             var currencyRate = await _currencyService.GetCurrencyRateAsync(code, date);
-            return HandleResult<CurrencyRate>(currencyRate);
+            return HandleResult<CurrencyRateDto>(currencyRate);
         }
 
         [HttpGet("codes")]

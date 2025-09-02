@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CurrencyTerminal.App.Common;
+using CurrencyTerminal.App.DTOs;
 using CurrencyTerminal.App.Errors;
 using CurrencyTerminal.App.Interfaces;
 using CurrencyTerminal.Domain.Entities;
@@ -37,33 +38,33 @@ namespace CurrencyTerminal.App.Services
 
             foreach (var cd in currencyDataList)
             {
-                dictionaryRate[cd.Vname] = cd.VchCode;
+                dictionaryRate[cd.Name] = cd.Code;
             }
 
             return Result<IDictionary<string, string>>.Success(dictionaryRate);
         }
 
-        public async Task<Result<IEnumerable<CurrencyRate>>> GetAllCurrencyRatesAsync(DateTime? onDate = null)
+        public async Task<Result<IEnumerable<CurrencyRateDto>>> GetAllCurrencyRatesAsync(DateTime? onDate = null)
         {
             var currencyDataList = await _currencyRepository.GetAllCurrenciesDataAsync(onDate);
 
             if (!currencyDataList.Any() && onDate.HasValue)
-                return Result<IEnumerable<CurrencyRate>>
+                return Result<IEnumerable<CurrencyRateDto>>
                     .Failure(CurrencyErrors.NotFound(onDate.Value));
 
-            return Result<IEnumerable<CurrencyRate>>
-                .Success(_mapper.Map<IEnumerable<CurrencyRate>>(currencyDataList));
+            return Result<IEnumerable<CurrencyRateDto>>
+                .Success(_mapper.Map<IEnumerable<CurrencyRateDto>>(currencyDataList));
         }
 
-        public async Task<Result<CurrencyRate>> GetCurrencyRateAsync(string currencyCode, DateTime? onDate = null)
+        public async Task<Result<CurrencyRateDto>> GetCurrencyRateAsync(string currencyCode, DateTime? onDate = null)
         {
             var currencyData = await _currencyRepository.GetCurrencyRateAsync(currencyCode, onDate);
 
             if(currencyData == null)
-                return Result<CurrencyRate>
+                return Result<CurrencyRateDto>
                     .Failure(CurrencyErrors.NotFound(currencyCode));
 
-            return Result<CurrencyRate>.Success(_mapper.Map<CurrencyRate>(currencyData));
+            return Result<CurrencyRateDto>.Success(_mapper.Map<CurrencyRateDto>(currencyData));
         }
     }
 }

@@ -10,9 +10,9 @@ namespace CurrencyTerminal.Domain.Entities
 {
     public sealed class CurrencyRate : BaseRate
     {
-        public decimal PreviousValueRate { get; private set; }
+        public double PreviousValueRate { get; private set; }
 
-        public static CurrencyRate Create(string code, string name, decimal value)
+        public static CurrencyRate Create(string code, string name, double value)
         {
             return new CurrencyRate
             {
@@ -22,7 +22,7 @@ namespace CurrencyTerminal.Domain.Entities
             };
         }
 
-        public void SetPreviousValueRate(decimal value)
+        public void SetPreviousValueRate(double value)
         {
             if (value < 0)
                 throw new CurrencyRateException("Цена (пред.) не может быть отрицательной!");
