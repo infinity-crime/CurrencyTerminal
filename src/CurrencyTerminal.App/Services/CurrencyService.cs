@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CurrencyTerminal.App.Services
 {
@@ -24,11 +25,29 @@ namespace CurrencyTerminal.App.Services
             _mapper = mapper;
         }
 
+        public async Task<Result<IDictionary<string, string>>> GetAllCurrencyCodesAsync()
+        {
+            var dictionaryRate = new Dictionary<string, string>();
+
+            var currencyDataList = await _currencyRepository.GetAllCurrenciesDataAsync();
+
+            if (!currencyDataList.Any())
+                return Result<IDictionary<string, string>>
+                    .Failure(CurrencyErrors.Failure());
+
+            foreach (var cd in currencyDataList)
+            {
+                dictionaryRate[cd.Vname] = cd.VchCode;
+            }
+
+            return Result<IDictionary<string, string>>.Success(dictionaryRate);
+        }
+
         public async Task<Result<IEnumerable<CurrencyRate>>> GetAllCurrencyRatesAsync(DateTime? onDate = null)
         {
             var currencyDataList = await _currencyRepository.GetAllCurrenciesDataAsync(onDate);
 
-            if (currencyDataList.Count() < 1 && onDate.HasValue)
+            if (!currencyDataList.Any() && onDate.HasValue)
                 return Result<IEnumerable<CurrencyRate>>
                     .Failure(CurrencyErrors.NotFound(onDate.Value));
 

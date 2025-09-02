@@ -12,5 +12,6 @@ namespace CurrencyTerminal.App.Interfaces
     {
         Task<Result<CurrencyRate>> GetCurrencyRateAsync(string currencyCode, DateTime? onDate = null);
         Task<Result<IEnumerable<CurrencyRate>>> GetAllCurrencyRatesAsync(DateTime? onDate = null);
+        Task<Result<IDictionary<string, string>>> GetAllCurrencyCodesAsync();
     }
 }

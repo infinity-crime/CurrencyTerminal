@@ -30,5 +30,12 @@ namespace CurrencyTerminal.WebAPI.Controllers
             var currencyRate = await _currencyService.GetCurrencyRateAsync(code, date);
             return HandleResult<CurrencyRate>(currencyRate);
         }
+
+        [HttpGet("codes")]
+        public async Task<IActionResult> GetCurrencyCodesAsync()
+        {
+            var dictionaryOfCodes = await _currencyService.GetAllCurrencyCodesAsync();
+            return HandleResult(dictionaryOfCodes);
+        }
     }
 }
